@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="de">
+    <title>schlafzyklen_für_dich😘</title>
+    <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+         body {
+      font-family: "Helvetica Neue", sans-serif;
+      background-color: #02071f;
+      color: #ffffff;
+    } 
+    .underline {
+        text-align: center;
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 5px;
+    font-size: 30px;
+   }
+    a {
+         font-size: 12px;
+          color: #00d9ff;
+        background-color: rgba(0, 217, 255, 0.08);
+        text-decoration: none;
+        border: 2px solid #00d9ff;
+        border-radius: 5px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+        padding: 10px; 
+    } 
+     .Box {
+        font-size: 12px;
+        color: #00d9ff;
+        background-color: rgba(0, 217, 255, 0.08);
+        text-decoration: none;
+        border: 2px solid #00d9ff;
+        border-radius: 5px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+        padding: 10px;
+    } 
+    .time-container {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        margin-top: 20px;
+    }
+
+    .dropdown {
+        position: relative;
+        width: 100px;
+        min-width: 100px;
+    }
+
+    .select {
+        background: #081a3b;
+        border: 2px solid #00d9ff;
+        border-radius: 12px;
+        padding: 12px 10px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 14px;
+        color: #999;
+        transition: background 0.2s, color 0.2s;
+        user-select: none;
+    }
+
+    .select.selected {
+        color: #00d9ff;
+        background: rgba(0, 217, 255, 0.08);
+    }
+
+    .menu {
+        position: absolute;
+        top: 110%;
+        left: 0;
+        right: 0;
+        background: #02071f;
+        border: 2px solid #00d9ff;
+        border-radius: 12px;
+        max-height: 160px;
+        overflow-y: auto;
+        display: none;
+        z-index: 10;
+    }
+
+    .menu.show {
+        display: block;
+    }
+
+    .menu li {
+        padding: 8px 6px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .menu li:hover {
+        background: #00d9ff;
+        color: #02071f;
+    }
+
+    .confirm-button {
+        border: 2px solid #00d9ff;
+        background: #081a3b;
+        color: #fff;
+        border-radius: 12px;
+        padding: 12px 16px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.2s, transform 0.2s;
+        align-self: center;
+        min-width: 120px;
+    }
+
+    .confirm-button:hover {
+        background: rgba(0, 217, 255, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .results-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin: 22px auto 0;
+        max-width: 560px;
+    }
+
+    .result-box {
+        min-width: 120px;
+        padding: 14px 12px;
+        border-radius: 14px;
+        border: 2px solid transparent;
+        text-align: center;
+        font-size: 14px;
+        color: #ffffff;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.24);
+    }
+
+    .result-box span {
+        display: block;
+        margin-top: 8px;
+        font-size: 12px;
+        color: rgba(255,255,255,0.8);
+    }
+
+    .result-1 { background: #2e3b76; border-color: #3b4ee0; }
+    .result-2 { background: #324a60; border-color: #176fdb; }
+    .result-3 { background: #3f4d35; border-color: #61b940; }
+    .result-4 { background: #4a2a54; border-color: #b85fd9; }
+    .result-5 { background: #623b16; border-color: #ff9d2b; }
+    .result-6 { background: #223c43; border-color: #2bd1c8; }
+
+    .input-box {
+        background: #02071f;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        padding: 1.2rem 1rem 0.5rem 1rem;
+        display: flex;
+        flex-direction: column;
+        width: 220px;
+        position: relative;
+        border: 2px solid transparent;
+        transition: border-color 0.2s;
+    }
+
+    a:hover {
+        background-color: rgba(0, 217, 255, 0.15);
+    }
+    
+    a:visited {
+        color: #00d9ff;
+        border-color: #00d9ff;
+    }
+
+</style>
+    </head>
+    <body>
+        <p class="underline">Gib ein wann aufstehen musst und ich kümmer mich drum</p>
+        <div class="time-container">
+            <div class="dropdown">
+                <div class="select" id="stunden-select">Stunden</div>
+                <ul class="menu" id="stunden-menu"></ul>
+            </div>
+
+            <div class="dropdown">
+                <div class="select" id="minuten-select">Minuten</div>
+                <ul class="menu" id="minuten-menu"></ul>
+            </div>
+
+            <button class="confirm-button" id="confirm-button">Bestätigen</button>
+        </div>
+
+        <div class="results-container" id="results-container"></div>
+
+        <script>
+            const closeAllMenus = () => document.querySelectorAll('.menu.show').forEach(menu => menu.classList.remove('show'));
+
+            document.addEventListener('click', event => {
+                const dropdown = event.target.closest('.dropdown');
+                if (!dropdown) {
+                    closeAllMenus();
+                    return;
+                }
+                const menu = dropdown.querySelector('.menu');
+                menu.classList.toggle('show');
+            });
+
+            function createOptions(menuId, max, step = 1) {
+                const menu = document.getElementById(menuId);
+                for (let i = 0; i <= max; i += step) {
+                    const text = String(i).padStart(2, '0');
+                    const item = document.createElement('li');
+                    item.textContent = text;
+                    item.addEventListener('click', () => {
+                        const select = menu.previousElementSibling;
+                        select.textContent = text;
+                        select.classList.add('selected');
+                        menu.classList.remove('show');
+                    });
+                    menu.appendChild(item);
+                }
+            }
+
+            createOptions('stunden-menu', 23);
+            createOptions('minuten-menu', 59, 5);
+
+            const confirmButton = document.getElementById('confirm-button');
+            const resultsContainer = document.getElementById('results-container');
+
+            function formatTime(date) {
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${hours}:${minutes}`;
+            }
+
+            function calculateSleepTimes() {
+                const hourText = document.getElementById('stunden-select').textContent;
+                const minuteText = document.getElementById('minuten-select').textContent;
+                if (hourText === 'Stunden' || minuteText === 'Minuten') {
+                    resultsContainer.innerHTML = '<div class="result-box result-1">Bitte zuerst Stunde und Minute wählen.</div>';
+                    return;
+                }
+
+                const wakeHours = Number(hourText);
+                const wakeMinutes = Number(minuteText);
+                const wakeTime = new Date();
+                wakeTime.setHours(wakeHours, wakeMinutes, 0, 0);
+
+                const steps = [90, 180, 270, 360, 450, 540];
+                resultsContainer.innerHTML = '';
+
+                steps.forEach((minutesBack, index) => {
+                    const sleepTime = new Date(wakeTime.getTime() - minutesBack * 60000);
+                    const box = document.createElement('div');
+                    box.className = `result-box result-${index + 1}`;
+                    box.innerHTML = `<strong>${formatTime(sleepTime)}</strong><span>${minutesBack / 60} Stunden vorher</span>`;
+                    resultsContainer.appendChild(box);
+                });
+            }
+
+            confirmButton.addEventListener('click', calculateSleepTimes);
+        </script>
+    </body>
+</html>
